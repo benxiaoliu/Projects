@@ -1,0 +1,190 @@
+<head>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link href="../static/multi-select.css" media="screen" rel="stylesheet" type="text/css">
+    <script src="../static/jquery.multi-select.js" type="text/javascript"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .wrap {
+            width: 600px;
+            margin: 0 auto;
+        }
+        table, th, td {
+        border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+<div class=wrap>
+    <br>
+    <br>
+    <button type="button" onclick="updateDatabase()">Sync up COSMOS</button>
+    <br>
+    <br>
+
+
+    <select multiple="multiple" id='selected-options'>
+        {% for time in time_list %}
+        <option value={{time}}>{{time}}</option>
+        {% end %}
+    </select>
+    <br>
+    <br>
+    <br>
+
+
+
+
+    <select multiple="multiple" id='select-charts'>
+        <option value='RMSE'>RMSE</option>
+        <option value='trainingDataVolume'>Trainging Data Volume</option>
+    </select>
+
+    <br>
+    <br>
+
+    <textarea id="rename-select" rows="4" cols="50">
+</textarea>
+    <p>Rename x-values here</p>
+    <br>
+    <br>
+    <br>
+    <button type="button" onclick="load_graph()">Visualize</button>
+
+    <div id='RMSE'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div id='trainingDataVolume'><!-- Plotly chart will be drawn inside this DIV --></div>
+<br><br><br>
+    <button type="button" onclick="showFeatureDifference()">show feature difference:</button>
+<br><br><br>
+
+</div>
+
+<table>
+      <tr id="featureDiff">
+
+      </tr>
+    </table>
+</body>
+
+<script>
+    // Select Guid
+    let selected_set = new Set();
+    $('#selected-options').multiSelect({
+        afterSelect: function (value) {
+            selected_set.add(value.toString());
+            updateTextArea();
+        },
+        afterDeselect: function (value) {
+            selected_set.delete(value.toString());
+            updateTextArea();
+        }
+    });
+
+    // Select diagram
+    let selected_charts = new Set();
+    $('#select-charts').multiSelect({
+        afterSelect: function (value) {
+            selected_charts.add(value.toString());
+        },
+        afterDeselect: function (value) {
+            selected_charts.delete(value.toString());
+        }
+    });
+
+    // Rename TextArea
+    var updateTextArea = function () {
+        $('#rename-select').val([...selected_set]);
+    };
+
+    var rename_x;
+
+    function load_graph() {
+        rename_x = $('#rename-select').val();
+        post_data();
+    }
+
+    function post_data() {
+        $.ajax({
+            url: "/",
+            type: "post",
+            data: {
+                "selected_set": JSON.stringify(([...selected_set])),
+                "selected_charts": JSON.stringify(([...selected_charts])),
+            },
+            async: true,
+            success: function (data) {
+                hide_graph();
+                for (const key of Object.keys(data["data_map"])) {
+                    draw_graph(key, data["data_map"][key])
+                }
+
+            }
+        });
+    }
+
+    function hide_graph() {
+        $('#RMSE').css("display", "none");
+        $('#trainingDataVolume').css("display", "none");
+    }
+
+    function draw_graph(colume, colume_y) {
+        $('#' + colume).css("display", "block");
+        var graphData = [
+            {
+                x: rename_x.split(','),
+                y: colume_y,
+                type: 'bar'
+            }
+        ];
+        Plotly.newPlot(colume, graphData);
+    }
+
+    function updateDatabase() {
+        $.ajax({
+            url: "/syncup",
+            type: "get",
+            async: true,
+            success: function (data) {
+                window.location.href = "http://benxiao.redmond.corp.microsoft.com:8002/";
+            },
+            error: function (httpRequest, textStatus, errorThrown) {  // detailed error messsage
+                alert("Error: retry should work");
+            }
+        });
+
+    }
+
+
+    function getFeatureDifference(){
+        $.ajax({
+            url: "/featureDifference",
+            type: "post",
+            data: {
+                "selected_set": JSON.stringify(([...selected_set])),
+            },
+            async: true,
+            success: function (data) {
+                var data_list = data["feature_list"];
+                $("#featureDiff").empty();
+                $.each(data_list , function(index, val) {
+                  $("#featureDiff").append("<td valign=\"top\">" + val + "</td>");
+                });
+
+            }
+        });
+    }
+
+    function showFeatureDifference(){
+        getFeatureDifference();
+
+    }
+
+
+</script>
+
+
