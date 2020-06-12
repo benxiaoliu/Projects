@@ -1,0 +1,57 @@
+﻿<div class="RankBERTDebug-main-div">
+    <!-- this optional snippet creates a "local" query box to the plugin, allowing users to edit settings separately from the global ones -->
+    <div class="RankBERTDebug-querybox"></div>
+</div>
+
+
+<div class="accordion">
+    <h3>Urls</h3>
+    <div>
+        <br><br><button id="generate-Json" name="submit">Generate Json</button>
+    </div>
+    <h3>DLIS Request</h3>
+    <div>
+        <label>Json of Request:</label>
+        <textarea id="Json-of-request" rows="4" cols="50">
+        DLIS Request Json
+        </textarea><br><br>
+        DLIS endpoint: <input type="text" id="endpointInput" style="width:50%">
+        <br /><br />
+        <button id="submit_dlis_request" name="submit" class="button">Submit DLIS Request</button>
+    </div>
+
+
+
+    <h3>DLIS Response</h3>
+    <div>
+
+    </div>
+</div>
+
+<script type="text/x-handlebars-template" id="DebugTemplate">
+    Sub Analysis Set:
+    <br>
+    <label class="input_label">Query:</label>
+    <input type="text" name="Query" style="width:75%" value="{{Query}}">
+    <br>
+
+    <label class="input_label">Snippet:</label>
+    <input type="text" name="Snippet" style="width:75%" value="{{Snippet}}">
+    <br>
+
+    
+    <label class="input_label">URL:</label>
+    <input type="text" name="URL" style="width:75%" value="{{URL}}">
+    <br>
+
+    <label class="input_label">Title:</label>
+    <input type="text" name="Title" style="width:75%" value="{{Title}}">
+    <br>
+
+    <label class="input_label">Market:</label>
+    <input type="text" name="Market" style="width:75%" value="{{Market}}">
+    <br>
+
+
+    <br>
+</script>

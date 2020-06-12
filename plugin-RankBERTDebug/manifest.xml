@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<View>
+  <Title>RankBERT Debug</Title>
+  <Description>[Fill in description]</Description>
+  <Thumbnail>Thumbnail.png</Thumbnail>
+  <Content>RankBERTDebug.html</Content>
+  <Owner>v-benliu</Owner>
+  <Beta>True</Beta>
+  <EntryClassName>RankBERTDebug</EntryClassName>
+  <EntryNamespace>QueryProbe</EntryNamespace>
+  <Scripts>
+    <Script>RankBERTDebug.js</Script>
+  </Scripts>
+  <StyleSheets>
+    <StyleSheet>RankBERTDebug.css</StyleSheet>
+  </StyleSheets>
+  <Resources>
+    <Resource>DLISData</Resource>
+  </Resources>  
+</View>
